@@ -1,54 +1,94 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import Layout from "./Layout";
-import { Button, HStack, Image, Text, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  HStack,
+  Image,
+  VStack,
+  Input,
+  InputGroup,
+  InputRightAddon,
+  Text,
+} from "@chakra-ui/react";
 import SideBarSection from "../components/SideBarSection";
-import { useNavigate } from "react-router-dom";
+import { FiPlusCircle } from "react-icons/fi";
+import { IoSearch } from "react-icons/io5";
+import emptyImage from "../assets/empty.jpg";
 import { useHttp } from "../hooks/http";
 import { getDecodeToken } from "../utilities/decodeToken";
 
-const MyOrders = () => {
+const HomePage = () => {
   const navigate = useNavigate();
-  const { handleGetTableDataRequest } = useHttp();
-  const user = getDecodeToken(); // Mendapatkan data user yang sedang login
+  const location = useLocation();
+  const { handleGetTableDataRequest, handlePostRequest } = useHttp();
+  const user = getDecodeToken();
 
-  const [rowCount, setRowCount] = useState(0);
+  const [products, setProducts] = useState([]);
+  const [keyword, setKeyword] = useState("");
   const [paginationModel, setPaginationModel] = useState({
     pageSize: 25,
     page: 0,
   });
 
-  const [orders, setOrders] = useState([]);
+  // Function to fetch query params
+  const getQueryParam = (param) => {
+    const searchParams = new URLSearchParams(location.search);
+    return searchParams.get(param);
+  };
 
-  const getTableData = async ({ search }) => {
+  const getTableData = async ({ keyword }) => {
+    const filter = {};
+
+    if (keyword) {
+      filter["keyword"] = keyword;
+    }
+
     try {
       const result = await handleGetTableDataRequest({
-        path: "/orders",
+        path: "/products",
         page: paginationModel.page ?? 0,
         size: paginationModel.pageSize ?? 10,
-        filter: { search, user_id: user.id }, // Filter berdasarkan user ID
+        filter: filter,
       });
+
       if (result) {
         console.log(result);
-        setOrders(result.orders);
+        setProducts(result.products);
       }
     } catch (error) {
       console.log(error);
     }
   };
 
+  const handleSearch = () => {
+    navigate(`?keyword=${keyword}`); // Updates the URL with the query
+    getTableData({ keyword });
+  };
+
   useEffect(() => {
-    getTableData({ search: "" });
-  }, []);
+    const queryKeyword = getQueryParam("keyword") || "";
+    setKeyword(queryKeyword);
+    getTableData({ keyword: queryKeyword });
+  }, [location.search]); // Re-run when query parameters change
+
+  const handleAddToCart = async (productId) => {
+    const payload = { product_id: productId, user_id: user.id };
+
+    await handlePostRequest({ path: "/cart", body: payload });
+    navigate("/cart");
+    window.location.reload();
+  };
+
+  const handleProductClick = (productId) => {
+    navigate(`/product/${productId}`);
+  };
 
   return (
     <Layout>
-      <HStack
-        align={"stretch"}
-        height={"100vh"}
-        w={"100vw"}
-        flexWrap={{ base: "wrap", md: "nowrap" }}
-      >
+      <HStack align={"stretch"} height={"100vh"} w={"100vw"}>
         <SideBarSection />
+
         {/* Main Section */}
         <VStack
           flex="1"
@@ -58,112 +98,153 @@ const MyOrders = () => {
           overflowY="auto"
           height="100vh"
         >
-          <Text
-            fontSize="4xl"
-            fontWeight="semibold"
-            px={{ base: "30px", md: "70px" }}
-            mb="-25px"
-          >
-            My Orders
-          </Text>
-          <HStack
-            spacing={4}
-            align="stretch"
-            w="full"
-            px={{ base: "10px", md: "50px" }}
-            flexWrap="wrap"
-            flexDirection={{ base: "column", md: "row" }}
-          >
-            {/* List Orders */}
-            <VStack
-              flex="2"
-              bg="#F7F3F4"
-              padding="14px"
-              spacing={6}
-              height="auto"
-              w="full"
+          {/* Header with Search */}
+          <HStack width="100%" justifyContent="space-between">
+            <Text
+              color={"#367236"}
+              fontSize="3xl"
+              fontWeight="medium"
+              fontFamily="'Covered By Your Grace', cursive"
             >
-              {orders.length > 0 ? (
-                orders.map((order, index) => (
-                  <HStack
-                    key={index}
-                    bg="white"
-                    boxShadow="md"
-                    borderRadius="md"
-                    padding="20px"
-                    spacing={4}
-                    align="center"
-                    justify="space-between"
-                    w="full"
-                  >
-                    <Image
-                      src={order.product_id?.image_url}
-                      alt={order.product_id?.image_url}
-                      boxSize="120px"
-                      objectFit="cover"
-                      borderRadius="md"
-                    ></Image>
-                    <VStack align="start" flex="1" spacing={1}>
-                      <Text fontWeight="bold">{order.product_id?.name}</Text>
-                      <Text fontSize="sm" color="gray.600">
-                        {order.product_id?.size[0]}, {order.product_id?.color[0]}
-                      </Text>
-                      <Text
-                        fontWeight="bold"
-                        color="#367236"
-                        mt={6}
-                        fontSize="lg"
-                      >
-                        Rp {order?.total_price?.toLocaleString("en-US") ?? "0"}
-                      </Text>
-                    </VStack>
-                    <VStack spacing={16}>
-                      <Text color="#367236" fontWeight="bold">
-                        {order?.payment_status}
-                      </Text>
-                      <Text fontSize="xs">{order?.createdAt}</Text>
-                    </VStack>
-                  </HStack>
-                ))
-              ) : (
-                <Text fontSize="3xl" fontWeight="semibold">
-                  No Orders Found
-                </Text>
-              )}
-            </VStack>
-
-            {/* Explore */}
-            <VStack
-              flex="1"
-              bg="#F7F3F4"
-              padding="26px"
-              mt={4}
-              spacing={4}
-              w="full"
-              height="70%"
-              justifyContent="center"
-              alignItems="center"
-              ml={{ base: 0, md: 10 }}
-            >
-              <Text fontSize="3xl" align="center" fontWeight="bold">
-                Explore More Product
-              </Text>
-              <Button
-                bg="#367236"
-                color="white"
-                size="lg"
-                w="30%"
-                variant="unstyled"
-                onClick={() => navigate("/products")}
+              UltiGear!
+            </Text>
+            <InputGroup width={"40%"} borderColor={"black"}>
+              <Input
+                placeholder="Search on Here"
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+              />
+              <InputRightAddon
+                bgColor={"#367236"}
+                color={"white"}
+                onClick={handleSearch}
+                cursor="pointer"
               >
-                Explore
-              </Button>
-            </VStack>
+                <IoSearch />
+              </InputRightAddon>
+            </InputGroup>
           </HStack>
+
+          {/* Banner */}
+          <Box
+            bg="#367236"
+            width="100%"
+            color="white"
+            padding="50px"
+            borderRadius="lg"
+          >
+            <HStack
+              justify="center"
+              align="center"
+              h="100%"
+              w="100%"
+              spacing={{ base: 8, md: 16 }}
+            >
+              <Text
+                fontSize={{ base: "4xl", md: "8xl" }}
+                fontWeight="medium"
+                fontStyle="italic"
+                fontFamily="'Covered By Your Grace', cursive"
+                lineHeight="1"
+              >
+                UltiGear!
+              </Text>
+              <Box
+                orientation="vertical"
+                borderColor="white"
+                height="100%"
+                borderWidth="3px"
+                borderRadius="5px"
+              />
+              <Text
+                fontSize={{ base: "xl", md: "3xl" }}
+                fontFamily="'Poppins', cursive"
+              >
+                Your Adventure Partner Start Here
+              </Text>
+            </HStack>
+          </Box>
+
+          {/* Empty State */}
+          {Array.isArray(products) && products.length === 0 && (
+            <div style={{ textAlign: "center", marginTop: "20px" }}>
+              <img
+                src={emptyImage}
+                alt="No Products"
+                style={{ width: "250px", height: "auto" }}
+              />
+              <p style={{ fontSize: "18px", color: "#555", marginTop: "10px" }}>
+                Product Not Found!
+              </p>
+            </div>
+          )}
+
+          {/* Product Grid */}
+          <Box
+            display="grid"
+            gridTemplateColumns="repeat(5, 1fr)"
+            gap={6}
+            width="100%"
+          >
+            {products.map((product, idx) => (
+              <Box
+                key={idx}
+                position="relative"
+                boxShadow="md"
+                borderRadius="lg"
+                bg="white"
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+                justifyContent="space-between"
+                overflow="hidden"
+              >
+                <Image
+                  src={
+                    product.image_url ??
+                    "https://via.placeholder.com/200x150?text=Jaket+Himalaya"
+                  }
+                  alt={product.name}
+                  width="100%"
+                  height="100%"
+                  objectFit="cover"
+                  bgColor="gray.200"
+                  cursor="pointer"
+                  onClick={() => handleProductClick(product._id)}
+                />
+                <VStack align="start" spacing={1} width="100%" p={3} bg="white">
+                  <Text fontSize="sm" fontWeight="medium">
+                    {product.name}
+                  </Text>
+                  <Text color="green.600" fontWeight="bold" fontSize="md">
+                    Rp {product.price.toLocaleString()}
+                  </Text>
+                </VStack>
+                <Box
+                  as="button"
+                  position="absolute"
+                  bottom="10px"
+                  right="10px"
+                  bg="#367236"
+                  color="white"
+                  width="30px"
+                  height="30px"
+                  borderRadius="full"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  cursor="pointer"
+                  onClick={() => handleAddToCart(product._id)}
+                >
+                  <FiPlusCircle size="24px" />
+                </Box>
+              </Box>
+            ))}
+          </Box>
         </VStack>
       </HStack>
     </Layout>
   );
 };
 
-export default MyOrders;
+export default HomePage;
