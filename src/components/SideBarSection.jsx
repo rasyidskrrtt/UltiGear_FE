@@ -26,8 +26,8 @@ const SideBarSection = () => {
   const { removeToken } = useToken();
 
   const [profile, setProfile] = useState({
-    username: "Windows Batubara",
-    email: "windowsbatubara@gmail.com",
+    username: "",
+    email: "",
     password: "",
     confirmPassword: "",
     photo_url: "",
