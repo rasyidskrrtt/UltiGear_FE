@@ -4,10 +4,12 @@ import { Button, HStack, Image, Text, VStack } from "@chakra-ui/react";
 import SideBarSection from "../components/SideBarSection";
 import { useNavigate } from "react-router-dom";
 import { useHttp } from "../hooks/http";
+import { getDecodeToken } from "../utilities/decodeToken";
 
 const MyOrders = () => {
   const navigate = useNavigate();
   const { handleGetTableDataRequest } = useHttp();
+  const user = getDecodeToken(); // Mendapatkan data user yang sedang login
 
   const [rowCount, setRowCount] = useState(0);
   const [paginationModel, setPaginationModel] = useState({
@@ -23,12 +25,11 @@ const MyOrders = () => {
         path: "/orders",
         page: paginationModel.page ?? 0,
         size: paginationModel.pageSize ?? 10,
-        filter: { search },
+        filter: { search, user_id: user.id }, // Filter berdasarkan user ID
       });
       if (result) {
         console.log(result);
         setOrders(result.orders);
-        // setRowCount(result.totalItems);
       }
     } catch (error) {
       console.log(error);
@@ -82,48 +83,53 @@ const MyOrders = () => {
               height="auto"
               w="full"
             >
-              {orders.map((order, index) => (
-                <HStack
-                  key={index}
-                  bg="white"
-                  boxShadow="md"
-                  borderRadius="md"
-                  padding="20px"
-                  spacing={4}
-                  align="center"
-                  justify="space-between"
-                  w="full"
-                >
-                  <Image
-                    src={order.product_id?.image_url}
-                    alt={order.product_id?.image_url}
-                    boxSize="120px"
-                    objectFit="cover"
+              {orders.length > 0 ? (
+                orders.map((order, index) => (
+                  <HStack
+                    key={index}
+                    bg="white"
+                    boxShadow="md"
                     borderRadius="md"
-                  ></Image>
-                  <VStack align="start" flex="1" spacing={1}>
-                    <Text fontWeight="bold">{order.product_id?.name}</Text>
-                    <Text fontSize="sm" color="gray.600">
-                      {order.product_id?.size[0]}, {order.product_id?.color[0]}
-                      {/* {order?.total_price / order.product_id?.price} Items */}
-                    </Text>
-                    <Text
-                      fontWeight="bold"
-                      color="#367236"
-                      mt={6}
-                      fontSize="lg"
-                    >
-                      Rp {order?.total_price?.toLocaleString("en-US") ?? "0"}
-                    </Text>
-                  </VStack>
-                  <VStack spacing={16}>
-                    <Text color="#367236" fontWeight="bold">
-                      {order?.payment_status}
-                    </Text>
-                    <Text fontSize="xs">{order?.createdAt}</Text>
-                  </VStack>
-                </HStack>
-              ))}
+                    padding="20px"
+                    spacing={4}
+                    align="center"
+                    justify="space-between"
+                    w="full"
+                  >
+                    <Image
+                      src={order.product_id?.image_url}
+                      alt={order.product_id?.image_url}
+                      boxSize="120px"
+                      objectFit="cover"
+                      borderRadius="md"
+                    ></Image>
+                    <VStack align="start" flex="1" spacing={1}>
+                      <Text fontWeight="bold">{order.product_id?.name}</Text>
+                      <Text fontSize="sm" color="gray.600">
+                        {order.product_id?.size[0]}, {order.product_id?.color[0]}
+                      </Text>
+                      <Text
+                        fontWeight="bold"
+                        color="#367236"
+                        mt={6}
+                        fontSize="lg"
+                      >
+                        Rp {order?.total_price?.toLocaleString("en-US") ?? "0"}
+                      </Text>
+                    </VStack>
+                    <VStack spacing={16}>
+                      <Text color="#367236" fontWeight="bold">
+                        {order?.payment_status}
+                      </Text>
+                      <Text fontSize="xs">{order?.createdAt}</Text>
+                    </VStack>
+                  </HStack>
+                ))
+              ) : (
+                <Text fontSize="3xl" fontWeight="semibold">
+                  No Orders Found
+                </Text>
+              )}
             </VStack>
 
             {/* Explore */}
@@ -148,11 +154,8 @@ const MyOrders = () => {
                 size="lg"
                 w="30%"
                 variant="unstyled"
-                onClick={() => {
-                  navigate("/home");
-                }}
+                onClick={() => navigate("/products")}
               >
-                {" "}
                 Explore
               </Button>
             </VStack>

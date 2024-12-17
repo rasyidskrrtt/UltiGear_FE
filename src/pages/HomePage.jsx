@@ -1,65 +1,88 @@
 import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import Layout from "./Layout";
-import { Box, HStack, Image, Text, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  HStack,
+  Image,
+  VStack,
+  Input,
+  InputGroup,
+  InputRightAddon,
+  Text,
+} from "@chakra-ui/react";
 import SideBarSection from "../components/SideBarSection";
 import { FiPlusCircle } from "react-icons/fi";
-import Search from "../components/Search";
-import { useNavigate } from "react-router-dom";
+import { IoSearch } from "react-icons/io5";
+import emptyImage from "../assets/empty.jpg";
 import { useHttp } from "../hooks/http";
 import { getDecodeToken } from "../utilities/decodeToken";
 
 const HomePage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { handleGetTableDataRequest, handlePostRequest } = useHttp();
   const user = getDecodeToken();
 
   const [products, setProducts] = useState([]);
-  const [rowCount, setRowCount] = useState(0);
+  const [keyword, setKeyword] = useState("");
   const [paginationModel, setPaginationModel] = useState({
     pageSize: 25,
     page: 0,
   });
 
-  const handleAddToCart = async (productId) => {
-    const payload = {
-      product_id: productId,
-      user_id: user.id,
-    };
-
-    await handlePostRequest({
-      path: "/cart",
-      body: payload,
-    });
-
-    navigate("/cart");
-    window.location.reload();
+  // Function to fetch query params
+  const getQueryParam = (param) => {
+    const searchParams = new URLSearchParams(location.search);
+    return searchParams.get(param);
   };
 
-  const getTableData = async ({ search }) => {
+  const getTableData = async ({ keyword }) => {
+    const filter = {};
+
+    if (keyword) {
+      filter["keyword"] = keyword;
+    }
+
     try {
       const result = await handleGetTableDataRequest({
         path: "/products",
         page: paginationModel.page ?? 0,
         size: paginationModel.pageSize ?? 10,
-        filter: { search },
+        filter: filter,
       });
+
       if (result) {
         console.log(result);
         setProducts(result.products);
-        // setRowCount(result.totalItems);
       }
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleProductClick = (productId) => {
-    navigate(`/product/${productId}`);
+  const handleSearch = () => {
+    navigate(`?keyword=${keyword}`); // Updates the URL with the query
+    getTableData({ keyword });
   };
 
   useEffect(() => {
-    getTableData({ search: "" });
-  }, []);
+    const queryKeyword = getQueryParam("keyword") || "";
+    setKeyword(queryKeyword);
+    getTableData({ keyword: queryKeyword });
+  }, [location.search]); // Re-run when query parameters change
+
+  const handleAddToCart = async (productId) => {
+    const payload = { product_id: productId, user_id: user.id };
+
+    await handlePostRequest({ path: "/cart", body: payload });
+    navigate("/cart");
+    window.location.reload();
+  };
+
+  const handleProductClick = (productId) => {
+    navigate(`/product/${productId}`);
+  };
 
   return (
     <Layout>
@@ -75,8 +98,32 @@ const HomePage = () => {
           overflowY="auto"
           height="100vh"
         >
-          {/* Header */}
-          <Search />
+          {/* Header with Search */}
+          <HStack width="100%" justifyContent="space-between">
+            <Text
+              color={"#367236"}
+              fontSize="3xl"
+              fontWeight="medium"
+              fontFamily="'Covered By Your Grace', cursive"
+            >
+              UltiGear!
+            </Text>
+            <InputGroup width={"40%"} borderColor={"black"}>
+              <Input
+                placeholder="Search on Here"
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+              />
+              <InputRightAddon
+                bgColor={"#367236"}
+                color={"white"}
+                onClick={handleSearch}
+                cursor="pointer"
+              >
+                <IoSearch />
+              </InputRightAddon>
+            </InputGroup>
+          </HStack>
 
           {/* Banner */}
           <Box
@@ -106,7 +153,7 @@ const HomePage = () => {
                 orientation="vertical"
                 borderColor="white"
                 height="100%"
-                borderWidth={{ base: "2px", md: "3px" }}
+                borderWidth="3px"
                 borderRadius="5px"
               />
               <Text
@@ -118,7 +165,21 @@ const HomePage = () => {
             </HStack>
           </Box>
 
-          {/* Product Card */}
+          {/* Empty State */}
+          {Array.isArray(products) && products.length === 0 && (
+            <div style={{ textAlign: "center", marginTop: "20px" }}>
+              <img
+                src={emptyImage}
+                alt="No Products"
+                style={{ width: "250px", height: "auto" }}
+              />
+              <p style={{ fontSize: "18px", color: "#555", marginTop: "10px" }}>
+                Product Not Found!
+              </p>
+            </div>
+          )}
+
+          {/* Product Grid */}
           <Box
             display="grid"
             gridTemplateColumns="repeat(5, 1fr)"
@@ -138,7 +199,6 @@ const HomePage = () => {
                 justifyContent="space-between"
                 overflow="hidden"
               >
-                {/* Product Image */}
                 <Image
                   src={
                     product.image_url ??
@@ -152,41 +212,29 @@ const HomePage = () => {
                   cursor="pointer"
                   onClick={() => handleProductClick(product._id)}
                 />
-
-                {/* Product Details */}
                 <VStack align="start" spacing={1} width="100%" p={3} bg="white">
                   <Text fontSize="sm" fontWeight="medium">
                     {product.name}
                   </Text>
                   <Text color="green.600" fontWeight="bold" fontSize="md">
-                    Rp {product.price.toLocaleString()}{" "}
-                    {/* Menampilkan harga dalam format IDR */}
+                    Rp {product.price.toLocaleString()}
                   </Text>
                 </VStack>
-
-                {/* Add to Cart Icon */}
                 <Box
                   as="button"
                   position="absolute"
                   bottom="10px"
                   right="10px"
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
                   bg="#367236"
                   color="white"
                   width="30px"
                   height="30px"
                   borderRadius="full"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
                   cursor="pointer"
-                  boxShadow="lg"
-                  transition="all 0.3s ease"
-                  _hover={{
-                    bg: "green.700",
-                    transform: "scale(1.1)",
-                    boxShadow: "xl",
-                  }}
-                  onClick={() => handleAddToCart(product._id)} // Tambahkan ke keranjang dan arahkan ke /cart
+                  onClick={() => handleAddToCart(product._id)}
                 >
                   <FiPlusCircle size="24px" />
                 </Box>

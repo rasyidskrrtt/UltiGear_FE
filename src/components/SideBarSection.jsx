@@ -38,7 +38,6 @@ const SideBarSection = () => {
       path: `/auth/users/my-profile`,
     });
     if (result) {
-      console.log(result);
       setProfile(result.user);
     }
   };
