@@ -10,6 +10,7 @@ import {
   Avatar,
   Flex,
   IconButton,
+  Divider,
 } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
 import SideBarSection from "../components/SideBarSection";
@@ -17,14 +18,17 @@ import Layout from "./Layout";
 import { FaChevronLeft } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 import { useHttp } from "../hooks/http";
+import { useToken } from "../hooks/token";
 import { getDecodeToken } from "../utilities/decodeToken";
 import UploadImage from "../components/UploadImage";
+import { IoLogOutOutline } from "react-icons/io5";
 
 const EditProfile = () => {
   const { handleUpdateRequest, handleGetRequest } = useHttp();
   const [loading, setLoading] = useState(false);
   const decodedToken = getDecodeToken();
   const navigate = useNavigate();
+  const { removeToken } = useToken();
 
   const [profile, setProfile] = useState({
     username: "",
@@ -61,6 +65,12 @@ const EditProfile = () => {
     }
   };
 
+  const handleLogut = () => {
+    removeToken();
+    navigate("/");
+    window.location.reload();
+  };
+
   useEffect(() => {
     handleGetDetailProfile();
   }, []);
@@ -69,29 +79,57 @@ const EditProfile = () => {
 
   return (
     <Layout>
-      <HStack align="stretch" height="100vh" w="100vw">
+      <HStack align="stretch" height="100vh" w="100%"
+        flexWrap={{ base: "wrap", md: "nowrap" }}
+      >
         <SideBarSection />
         {/* Main Section */}
         <VStack
           flex="1"
-          align="center"
-          justify="center"
-          p="20px"
-          spacing="8"
-          overflow="auto"
-          height="100vh"
+          align="start"
+          p={{ base: "2px", md: "20px"}}
+          spacing={8}
+          overflowY="auto"
+          height={{ base: "calc(100vh - 80px)", md: "100vh" }} 
         >
-          <VStack w="100%" px={8}>
+          <Text
+            fontSize="4xl"
+            fontWeight="semibold"
+            alignSelf= {{ base: "center", md: "start" }}
+            mt={{ base: "30px", md: "0" }}
+            px={{ base: "30px", md: "35px", lg:"70px" }}
+            mb="-25px"
+            display={{base: "flex", md: "none"}}
+          >
+            Edit Profile
+          </Text>
+          <Divider
+            borderColor="black.900"
+            mt={2}
+            mb={-2}
+            width="90%"
+            alignSelf="center"
+            display={{base: "flex", md: "none"}}
+          />
+
+          {/* Box Profile */}
+          <VStack w="100%" px={10}
+            h={{base: "70vh", md: "100vh"}}
+            display="flex"
+            justifyContent={{base: "none", md: "center"}}
+            alignItems={{base: "none", md: "center"}}
+          >
             <Box
               as="form"
               w="100%"
               maxW="350px" 
-              p={4} 
+              p={6} 
               bg="white"
               borderRadius="lg"
               boxShadow="md"
               onSubmit={handleSubmit}
               position="relative"
+              mb={-2}
             >
               <HStack w="100%" mb={4}> {/* Mengurangi margin bottom header */}
                 <IconButton
@@ -195,6 +233,19 @@ const EditProfile = () => {
               </VStack>
             </Box>
           </VStack>
+          {/* Logout */}
+          <Button
+            color={"white"}
+            bg={"red.600"}
+            mb={5}
+            display={{base:"flex", md: "none"}}
+            alignSelf="center"
+            position="relative"
+            _hover={{ bg: "yellow.700" }}
+            onClick={handleLogut}
+          >
+            <IoLogOutOutline /> Logout
+          </Button>
         </VStack>
       </HStack>
     </Layout>

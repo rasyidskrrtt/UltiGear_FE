@@ -1,10 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Box, Text, HStack, VStack } from "@chakra-ui/react";
+import { Box, Text, HStack, VStack, Button } from "@chakra-ui/react";
 import SideBarAdmin from "../../components/SideBarAdmin";
 import { useHttp } from "../../hooks/http";
+import { useToken } from "../../hooks/token";
+import { useNavigate } from "react-router-dom";
+import { IoLogOutOutline } from "react-icons/io5";
 
 const Dashboard = () => {
   const { handleGetRequest } = useHttp();
+  const navigate = useNavigate();
+  const { removeToken } = useToken();
   const [total, setTotal] = useState({
     totalProducts: 0,
     totalOrders: 0,
@@ -20,32 +25,37 @@ const Dashboard = () => {
     }
   };
 
+  const handleLogut = () => {
+    removeToken();
+    navigate("/");
+    window.location.reload();
+  };
+
   useEffect(() => {
     handleGetStatistic();
   }, []);
 
   return (
-    <HStack height="100vh" align="stretch" spacing={0}>
+    <HStack height="100vh" align="stretch" w="100%" spacing={0}
+    >
       {/* Sidebar */}
-      <Box>
-        <SideBarAdmin />
-      </Box>
+      <SideBarAdmin />
 
       {/* Main Content */}
       <VStack
         flex="1"
         align="start"
-        padding="20px 40px"
+        padding={{ base: "50px 30px", md: "40px" }} 
         spacing={8}
         overflowY="auto"
-        height="100vh"
+        height={{ base: "calc(100vh - 80px)", md: "100vh" }}
       >
         {/* Header */}
         <Box
           bg="#367236"
           width="100%"
           color="white"
-          padding="50px"
+          padding={{ base: "30px", md: "50px" }}
           borderRadius="lg"
         >
           <HStack
@@ -53,10 +63,11 @@ const Dashboard = () => {
             align="center"
             h="100%"
             w="100%"
-            spacing={{ base: 8, md: 16 }}
+            spacing={{ base: 2, md: 12, lg: 16 }}
+            flexDirection={{ base: "column", md: "row"}}
           >
             <Text
-              fontSize={{ base: "4xl", md: "8xl" }}
+              fontSize={{ base: "7xl", md: "6xl", lg: "8xl"}}
               fontWeight="medium"
               fontStyle="italic"
               fontFamily="'Covered By Your Grace', cursive"
@@ -70,12 +81,13 @@ const Dashboard = () => {
               height="100%"
               borderWidth={{ base: "2px", md: "3px" }}
               borderRadius="5px"
+              display={{base: "none", md: "flex"}}
             />
             <Text
-              fontSize={{ base: "xl", md: "3xl" }}
+              fontSize={{ base: "sm", md: "md", lg: "3xl"}}
               fontFamily="'Poppins', cursive"
             >
-              Your Adventure Partner Stats Here
+              Your Adventure Partner Starts Here
             </Text>
           </HStack>
         </Box>
@@ -169,6 +181,20 @@ const Dashboard = () => {
             </Text>
           </Box>
         </Box>
+
+        {/* Logout */}
+        <Button
+          color="white"
+          bg="red.600"
+          alignSelf="center"
+          mt={5}
+          display={{ base: "flex", md: "none" }}
+          _hover={{ bg: "yellow.700" }}
+          onClick={handleLogut}
+          w="40%"
+        >
+          <IoLogOutOutline /> Logout
+        </Button>
       </VStack>
     </HStack>
   );

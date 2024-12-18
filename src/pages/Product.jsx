@@ -95,11 +95,12 @@ const Product = () => {
   }, []);
 
   return (
-    <HStack align="stretch" height="100vh" w="100vw">
+    <HStack align="stretch" height="100vh" w="100%" spacing={0}>
       <SideBarSection />
-
-      <Flex flex="1" align="center" justify="center" padding="20px" bg="white">
-        <VStack align="start" width="80%" spacing={6}>
+      <Flex flex="1" 
+        bg="white"
+        align="center" justify="center" padding="5px">
+        <VStack align="center" width="80%" spacing={6}>
           <HStack width="100%" justify="space-between">
             <IconButton
               icon={<FaArrowLeft />}
@@ -121,11 +122,13 @@ const Product = () => {
 
           <Divider borderColor="gray.300" />
 
-          <HStack spacing={10} align="start" width="100%">
+          <HStack spacing={10} align="start" width="100%"
+            flexDirection={{ base: "column", md: "row"}}
+          >
             <Image
               src={product.image_url}
               alt="Product Image"
-              boxSize="300px"
+              boxSize={{ base: "200px", md: "300px"}}
               borderRadius="md"
               boxShadow="md"
             />
@@ -204,7 +207,7 @@ const Product = () => {
 
               <Divider borderColor="gray.300" />
 
-              <HStack spacing={4} width="100%">
+              <HStack spacing={4} width="100%" mb={20}>
                 <Button
                   backgroundColor="white"
                   color="green"

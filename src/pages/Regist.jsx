@@ -11,6 +11,7 @@ import {
   InputRightElement,
   Icon,
   useToast,
+  useMediaQuery,
 } from "@chakra-ui/react";
 import { FaCheck } from "react-icons/fa6";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
@@ -27,6 +28,7 @@ const Regist = () => {
   const toast = useToast();
   const navigate = useNavigate();
   const { handlePostRequest } = useHttp();
+  const [isMobile] = useMediaQuery("(max-width: 450px)"); // Deteksi ukuran layar HP
 
   // Regex for email validation
   const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -91,148 +93,165 @@ const Regist = () => {
 
   return (
     <Layout>
-      <HStack w={"100vw"} h={"100%"}>
-        {/* Side Section */}
+      <Box w="100%" h="100vh">
         <Box
-          w={"30%"}
-          bg={"#367236"}
-          h={"100%"}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
+           display="flex"
+           flexDirection={isMobile ? "column" : "row"} // Kolom untuk HP, baris untuk laptop
+           h="100%"
         >
-          <Text
-            color={"white"}
-            fontSize="7xl"
-            fontWeight="medium"
-            fontFamily="'Covered By Your Grace', cursive"
+          {/* Side Section */}
+          <Box
+            w={isMobile ? "100%" : "35%"}
+            bg="#367236"
+            h={isMobile ? "50vh" : "100vh"}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            borderBottomLeftRadius={isMobile ? "45px" : "0px"}
+            borderBottomRightRadius={isMobile ? "45px" : "0px"}
           >
-            UltiGear!
-          </Text>
-        </Box>
-
-        {/* Form Section */}
-        <VStack w={{ lg: "35vw", base: "70vw" }} p={"12"} mx={"auto"}>
-          <HStack justify="space-between" w="100%">
-            <Text fontSize={"3xl"} fontWeight={"bold"}>
-              Create Account
-            </Text>
-            <Button
-              bg={"F7F3F4"}
-              color={"#367236"}
-              variant={"link"}
-              fontWeight={"bold"}
-              _hover={{ color: "teal.600" }}
-              onClick={() => navigate("/")}
+            <Text
+              color={"white"}
+              fontSize={isMobile ? "8xl" : "7xl"}
+              fontWeight="medium"
+              fontFamily="'Covered By Your Grace', cursive"
             >
-              Login
-            </Button>
-          </HStack>
-
-          <Box w={"100%"} mt={"4"}>
-            <Text textAlign={"left"} mb={"1"}>
-              Username
+              UltiGear!
             </Text>
-            <InputGroup>
-              <Input
-                placeholder="Enter your Username"
-                borderColor={"black"}
-                value={username}
-                required
-                onChange={(e) => setUsername(e.target.value)}
-              />
-              {username.length >= 4 && (
-                <InputRightElement>
-                  <Icon as={FaCheck} color="green.500" />
-                </InputRightElement>
-              )}
-            </InputGroup>
           </Box>
 
-          <Box w={"100%"} mt={"4"}>
-            <Text textAlign={"left"} mb={"1"}>
-              Email
-            </Text>
-            <InputGroup>
-              <Input
-                placeholder="Enter your email"
-                borderColor={"black"}
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              {validateEmail(email) && (
-                <InputRightElement>
-                  <Icon as={FaCheck} color="green.500" />
-                </InputRightElement>
-              )}
-            </InputGroup>
-          </Box>
-
-          <Box w={"100%"} mt={"4"}>
-            <Text textAlign={"left"} mb={"1"}>
-              Password
-            </Text>
-            <InputGroup>
-              <Input
-                type={passwordVisible ? "text" : "password"}
-                placeholder="Enter your password"
-                borderColor={"black"}
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <InputRightElement>
-                <Button
-                  size="sm"
-                  onClick={() => setPasswordVisible((prev) => !prev)}
-                  bg="transparent"
-                  _hover={{ bg: "transparent" }}
-                >
-                  {passwordVisible ? <FaRegEye /> : <FaRegEyeSlash />}
-                </Button>
-              </InputRightElement>
-            </InputGroup>
-          </Box>
-
-          <Box w={"100%"} mt={"4"}>
-            <Text textAlign={"left"} mb={"1"}>
-              Confirm Password
-            </Text>
-            <InputGroup>
-              <Input
-                type={confirmPasswordVisible ? "text" : "password"}
-                placeholder="Enter your password again"
-                borderColor={"black"}
-                required
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-              />
-              <InputRightElement>
-                <Button
-                  size="sm"
-                  onClick={() => setConfirmPasswordVisible((prev) => !prev)}
-                  bg="transparent"
-                  _hover={{ bg: "transparent" }}
-                >
-                  {confirmPasswordVisible ? <FaRegEye /> : <FaRegEyeSlash />}
-                </Button>
-              </InputRightElement>
-            </InputGroup>
-          </Box>
-
-          <Button
-            bgColor={"#367236"}
-            mt={"4"}
-            color={"#F7F3F4"}
-            w={"24"}
-            _hover={{ bg: "#285b28" }}
-            onClick={handleSubmit}
+          {/* Form Section */}
+          <Box
+            w={isMobile ? "100%" : "70%"} // Penuh di HP, 70% di Laptop
+            h="100%" 
+            display="flex"
+            alignItems="center" 
+            justifyContent="center" 
+            p={12} 
           >
-            Sign Up
-          </Button>
-        </VStack>
-      </HStack>
+            <VStack w="100%" maxW="md">
+              <HStack justify="space-between" w="100%">
+                <Text fontSize={isMobile ? "22px" : "3xl"} fontWeight={"bold"}>
+                  Create Account
+                </Text>
+                <Button
+                  bg={"F7F3F4"}
+                  color={"#367236"}
+                  variant={"link"}
+                  fontWeight={"bold"}
+                  _hover={{ color: "teal.600" }}
+                  onClick={() => navigate("/")}
+                >
+                  Login
+                </Button>
+              </HStack>
+
+              <Box w={"100%"} mt={"4"}>
+                <Text textAlign={"left"} mb={"1"}>
+                  Username
+                </Text>
+                <InputGroup>
+                  <Input
+                    placeholder="Enter your Username"
+                    borderColor={"black"}
+                    value={username}
+                    required
+                    onChange={(e) => setUsername(e.target.value)}
+                  />
+                  {username.length >= 4 && (
+                    <InputRightElement>
+                      <Icon as={FaCheck} color="green.500" />
+                    </InputRightElement>
+                  )}
+                </InputGroup>
+              </Box>
+
+              <Box w={"100%"} mt={"4"}>
+                <Text textAlign={"left"} mb={"1"}>
+                  Email
+                </Text>
+                <InputGroup>
+                  <Input
+                    placeholder="Enter your email"
+                    borderColor={"black"}
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                  {validateEmail(email) && (
+                    <InputRightElement>
+                      <Icon as={FaCheck} color="green.500" />
+                    </InputRightElement>
+                  )}
+                </InputGroup>
+              </Box>
+
+              <Box w={"100%"} mt={"4"}>
+                <Text textAlign={"left"} mb={"1"}>
+                  Password
+                </Text>
+                <InputGroup>
+                  <Input
+                    type={passwordVisible ? "text" : "password"}
+                    placeholder="Enter your password"
+                    borderColor={"black"}
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <InputRightElement>
+                    <Button
+                      size="sm"
+                      onClick={() => setPasswordVisible((prev) => !prev)}
+                      bg="transparent"
+                      _hover={{ bg: "transparent" }}
+                    >
+                      {passwordVisible ? <FaRegEye /> : <FaRegEyeSlash />}
+                    </Button>
+                  </InputRightElement>
+                </InputGroup>
+              </Box>
+
+              <Box w={"100%"} mt={"4"}>
+                <Text textAlign={"left"} mb={"1"}>
+                  Confirm Password
+                </Text>
+                <InputGroup>
+                  <Input
+                    type={confirmPasswordVisible ? "text" : "password"}
+                    placeholder="Enter your password again"
+                    borderColor={"black"}
+                    required
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                  />
+                  <InputRightElement>
+                    <Button
+                      size="sm"
+                      onClick={() => setConfirmPasswordVisible((prev) => !prev)}
+                      bg="transparent"
+                      _hover={{ bg: "transparent" }}
+                    >
+                      {confirmPasswordVisible ? <FaRegEye /> : <FaRegEyeSlash />}
+                    </Button>
+                  </InputRightElement>
+                </InputGroup>
+              </Box>
+
+              <Button
+                bgColor={"#367236"}
+                mt={"4"}
+                color={"#F7F3F4"}
+                w={"24"}
+                _hover={{ bg: "#285b28" }}
+                onClick={handleSubmit}
+              >
+                Sign Up
+              </Button>
+            </VStack>
+          </Box>
+        </Box>
+      </Box>
     </Layout>
   );
 };

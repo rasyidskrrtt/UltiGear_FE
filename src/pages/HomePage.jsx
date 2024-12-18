@@ -96,7 +96,8 @@ const HomePage = () => {
           padding="20px"
           spacing={8}
           overflowY="auto"
-          height="100vh"
+          height={{ base: "calc(100vh - 80px)", md: "100vh" }}
+          py={10}
         >
           {/* Header with Search */}
           <HStack width="100%" justifyContent="space-between">
@@ -182,7 +183,7 @@ const HomePage = () => {
           {/* Product Grid */}
           <Box
             display="grid"
-            gridTemplateColumns="repeat(5, 1fr)"
+            gridTemplateColumns={{ base: "repeat(2, 1fr)", md: "repeat(5, 1fr)" }}
             gap={6}
             width="100%"
           >

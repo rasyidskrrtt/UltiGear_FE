@@ -74,19 +74,19 @@ const EditProduct = () => {
 
   return (
     <Layout>
-      <HStack height="100vh" w="100vw" align="stretch">
+      <HStack height="100%" w="100%" align="stretch" spacing={0}>
         {/* Sidebar */}
         <Box>
           <SideBarAdmin />
         </Box>
         {/* Main Section */}
-        <Box p={5} px={20} h="100vh" w="100vw" bg="#F7F3F4" overflow="auto">
+        <Box p={{base:"30px 20px", md: "14px 20px"}} px={{base:4, md:16}} h="100vh" w="100vw" bg="#F7F3F4" overflow="auto">
           {/* Header Section */}
           <HStack
             justifyContent="space-between"
             mb={4}
             p={4}
-            px={10}
+            px={{base: 8, md: 10}}
             bg="#367236"
             borderRadius="md"
             boxShadow="sm"
@@ -114,12 +114,12 @@ const EditProduct = () => {
             spacing={4}
             align="stretch"
             bg="gray.200"
-            p={10}
+            p={{base:6, md:10}}
             borderRadius={10}
           >
             <FormControl>
               <HStack>
-                <FormLabel w={48}>Name</FormLabel>
+                <FormLabel w={{base:32, md:48}}>Name</FormLabel>
                 <Input
                   onChange={(e) =>
                     setProduct({ ...product, name: e.target.value })
@@ -135,7 +135,7 @@ const EditProduct = () => {
             {/* Category */}
             <FormControl>
               <HStack>
-                <FormLabel w={48}>Category</FormLabel>
+                <FormLabel w={{base:32, md:48}}>Category</FormLabel>
                 <Input
                   onChange={(e) =>
                     setProduct({ ...product, category: e.target.value })
@@ -150,7 +150,7 @@ const EditProduct = () => {
 
             <FormControl>
               <HStack>
-                <FormLabel w={48}>Product</FormLabel>
+                <FormLabel w={{base:32, md:48}}>Product</FormLabel>
                 <Textarea
                   onChange={(e) =>
                     setProduct({ ...product, description: e.target.value })
@@ -165,7 +165,7 @@ const EditProduct = () => {
 
             <FormControl>
               <HStack>
-                <FormLabel w={48}>Image</FormLabel>
+                <FormLabel w={{base:32, md:48}}>Image</FormLabel>
                 <Input
                   type="file"
                   accept="image/*"
@@ -185,7 +185,7 @@ const EditProduct = () => {
 
             <FormControl>
               <HStack>
-                <FormLabel w={48}>Price</FormLabel>
+                <FormLabel w={{base:32, md:48}}>Price</FormLabel>
                 <Input
                   onChange={(e) =>
                     setProduct({ ...product, price: +e.target.value })
@@ -201,12 +201,12 @@ const EditProduct = () => {
 
             <FormControl>
               <HStack>
-                <FormLabel w={40}>Size</FormLabel>
+                <FormLabel w={{base:24, md:40}}>Size</FormLabel>
                 <HStack spacing={4}>
                   {["S", "M", "L", "XL"].map((size) => (
                     <Button
                       key={size}
-                      size="sm"
+                      size={{base: "xs", md:"sm"}}
                       variant="outline"
                       onClick={(e) => setProduct({ ...product, size })}
                       borderColor="black"
@@ -220,12 +220,12 @@ const EditProduct = () => {
 
             <FormControl>
               <HStack>
-                <FormLabel w={40}>Color</FormLabel>
-                <HStack spacing={4}>
+                <FormLabel w={{base:24, md:40}}>Color</FormLabel>
+                <HStack spacing={{base: 2, md:4}}>
                   {["Red", "Green", "Yellow", "Blue"].map((color) => (
                     <Button
                       key={color}
-                      size="sm"
+                      size={{base: "xs", md:"sm"}}
                       variant="outline"
                       colorScheme={color.toLowerCase()}
                       onClick={(e) => setProduct({ ...product, color })}
@@ -239,13 +239,14 @@ const EditProduct = () => {
 
             <FormControl>
               <HStack>
-                <FormLabel w={40}>Stock</FormLabel>
+                <FormLabel w={{base:24, md:40}}>Stock</FormLabel>
                 <HStack>
                   <Button
                     bg="#367236"
                     color="white"
                     variant="unstyled"
                     onClick={() => setStock(stock - 1)}
+                    size={{base: "xs", md:"sm"}}
                   >
                     -
                   </Button>
@@ -257,6 +258,7 @@ const EditProduct = () => {
                       setStock(parseInt(valueString, 10))
                     }
                     min={0}
+                    size={{base: "xs", md:"sm"}}
                   >
                     <NumberInputField />
                   </NumberInput>
@@ -265,6 +267,7 @@ const EditProduct = () => {
                     color="white"
                     variant="unstyled"
                     onClick={() => setStock(stock + 1)}
+                    size={{base: "xs", md:"sm"}}
                   >
                     +
                   </Button>
@@ -275,7 +278,7 @@ const EditProduct = () => {
             <Button
               color="white"
               bg="#DFA258"
-              w="10%"
+              w={{base: "20%", md: "10%"}}
               variant="unstyled"
               onClick={handleSubmit}
               size="md"

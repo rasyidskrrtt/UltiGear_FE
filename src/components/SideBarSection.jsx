@@ -7,6 +7,7 @@ import {
   HStack,
   Text,
   VStack,
+  useMediaQuery,
 } from "@chakra-ui/react";
 import { IoLogOutOutline } from "react-icons/io5";
 import { AiFillHome, AiOutlineFileSearch } from "react-icons/ai";
@@ -24,6 +25,7 @@ const SideBarSection = () => {
   const user = getDecodeToken();
   const isActive = (path) => location.pathname === path;
   const { removeToken } = useToken();
+  const [isMobile] = useMediaQuery("(max-width: 450px)"); // Deteksi ukuran layar HP
 
   const [profile, setProfile] = useState({
     username: "",
@@ -38,6 +40,7 @@ const SideBarSection = () => {
       path: `/auth/users/my-profile`,
     });
     if (result) {
+      console.log(result);
       setProfile(result.user);
     }
   };
@@ -57,143 +60,135 @@ const SideBarSection = () => {
       <Box
         bg="#367236"
         color="white"
-        width="20vw"
-        maxWidth="300px"
-        h="100vh"
-        top="0"
-        position="sticky"
-        paddingBlock="20px"
+        width="100%"
+        h={isMobile ? "10vh" : "100vh"}
+        position={isMobile ? "fixed" : "sticky"}
+        bottom={0}
+        left={0}
+        padding={isMobile ? "15px" : "20px"}
         display="flex"
-        flexDirection="column"
+        flexDirection={isMobile ? "row" : "column"}
         alignItems="center"
-        justifyContent="center"
+        justifyContent={isMobile ? "space-around" : "center"}
+        zIndex={10}
       >
-        <VStack align="center" width="100%" paddingInline="30px">
-          <Box textAlign="center">
-            <Avatar size={"xl"} mb={"4"} src={profile?.photo_url} />
-            <Text fontSize={"lg"} mb={"8"}>
-              Welcome Back! <br />
-              <Text as="span" fontWeight={"bold"}>
-                {profile?.username}
+        {/* Sidebar Mobile: Horizontal */}
+        {isMobile ? (
+          <HStack align="flex-end" justify="space-around" w="100%">
+            {[
+              { label: "Home", icon: <AiFillHome size="24px" />, path: "/home" },
+              { label: "Cart", icon: <IoMdCart size="24px" />, path: "/cart" },
+              { label: "Orders", icon: <AiOutlineFileSearch size="24px" />, path: "/myorders" },
+              { label: "Edit", icon: <MdEdit size="24px" />, path: "/editprofile" },
+            ].map((item) => (
+              <VStack
+                key={item.label}
+                onClick={() => navigate(item.path)}
+                cursor="pointer"
+                color={isActive(item.path) ? "#DFA258" : "white"}
+                _hover={{ color: "#DFA258" }}
+              >
+                {item.icon}
+                <Text fontSize="xs">{item.label}</Text>
+              </VStack>
+            ))}
+          </HStack>
+        ) : (
+          /* Sidebar Desktop: Vertical */
+        <VStack align="start" spacing={4} w="100%">
+          <VStack align="center" width="100%" paddingInline="30px">
+            <Box textAlign="center">
+              <Avatar size={"xl"} mb={"4"} src={profile?.photo_url} />
+              <Text fontSize={"lg"} mb={"8"}>
+                Welcome Back! <br />
+                <Text as="span" fontWeight={"bold"}>
+                  {profile?.username}
+                </Text>
               </Text>
-            </Text>
-          </Box>
-        </VStack>
-        <VStack align={"start"} spacing={"2"} width={"100%"}>
+            </Box>
+          </VStack>
+
+          {/* Navbar */}
+            {/* Tombol Navigasi */}
+            {[
+              { label: "Home", icon: <AiFillHome size="24px" />, path: "/home" },
+              { label: "Cart", icon: <IoMdCart size="24px" />, path: "/cart" },
+              { label: "My Orders", icon: <AiOutlineFileSearch size="24px" />, path: "/myorders" },
+            ].map((item) => (
+            <Button
+              key={item.label}
+              leftIcon={item.icon}
+              fontSize="lg"
+              bg="#367236"
+              justifyContent="flex-start"
+              color={isActive(item.path) ? "#DFA258" : "white"}
+              width="100%"
+              _hover={{ color: "#DFA258" }}
+              _active={{ bg: "#367236" }}
+              position="relative"
+              textAlign={"center"}
+              pl="6"
+              onClick={() => navigate(item.path)}
+              _before={{
+                content: '""',
+                position: "absolute",
+                height: isActive(item.path) ? "50%" : "0",
+                width: "4px",
+                bg: "#DFA258",
+                left: "-20px",
+                borderRadius: "0 1.5px 1.5px 0",
+                transition: "height 0.3s ease-in-out",
+              }}
+            >
+              {item.label}
+            </Button>
+            ))}
+            <Divider
+              borderColor="whiteAlpha.900"
+              mb={4}
+              mt={4}
+            />
+
+            {/* Tombol Navigasi Setelah Divider */}
+            <Button
+              leftIcon={<MdEdit size="24px" />}
+              fontSize="lg"
+              justifyContent="flex-start"
+              bg="#367236"
+              color={isActive("/editprofile") ? "#DFA258" : "white"}
+              width="100%"
+              _hover={{ color: "#DFA258" }}
+              _active={{ bg: "#367236" }}
+              position="relative"
+              pl="6"
+              onClick={() => navigate("/editprofile")}
+              _before={{
+                content: '""',
+                position: "absolute",
+                height: isActive("/editprofile") ? "50%" : "0",
+                width: "4px",
+                bg: "#DFA258",
+                left: "-20px",
+                borderRadius: "0 1.5px 1.5px 0",
+                transition: "height 0.3s ease-in-out",
+              }}
+            >
+              Edit Profile
+            </Button>
+
+          {/* Logout */}
           <Button
-            leftIcon={<AiFillHome size="24px" />}
-            fontSize="lg"
-            bg="#367236"
-            justifyContent="flex-start"
-            color={isActive("/home") ? "#DFA258" : "white"}
-            width="100%"
-            _hover={{ color: "#DFA258" }}
-            _active={{ bg: "#367236" }}
-            position="relative"
-            textAlign={"center"}
-            pl="10"
-            onClick={() => navigate("/home")}
-            _before={{
-              content: '""',
-              position: "absolute",
-              height: isActive("/home") ? "50%" : "0",
-              width: "4px",
-              bg: "#DFA258",
-              left: "0",
-              borderRadius: "0 1.5px 1.5px 0",
-              transition: "height 0.3s ease-in-out",
-            }}
+            color={"white"}
+            bg={"#DFA258"}
+            mt="10"
+            alignSelf={"center"}
+            _hover={{ bg: "yellow.700" }}
+            onClick={handleLogut}
           >
-            Home
+            <IoLogOutOutline /> Logout
           </Button>
-          <Button
-            leftIcon={<IoMdCart size="24px" />}
-            fontSize="lg"
-            justifyContent="flex-start"
-            bg="#367236"
-            color={isActive("/cart") ? "#DFA258" : "white"}
-            width="100%"
-            _hover={{ color: "#DFA258" }}
-            _active={{ bg: "#367236" }}
-            position="relative"
-            pl="10"
-            onClick={() => navigate("/cart")}
-            _before={{
-              content: '""',
-              position: "absolute",
-              height: isActive("/cart") ? "50%" : "0",
-              width: "4px",
-              bg: "#DFA258",
-              left: "0",
-              borderRadius: "0 1.5px 1.5px 0",
-              transition: "height 0.3s ease-in-out",
-            }}
-          >
-            Cart
-          </Button>
-          <Button
-            leftIcon={<AiOutlineFileSearch size="24px" />}
-            fontSize="lg"
-            justifyContent="flex-start"
-            bg="#367236"
-            color={isActive("/myorders") ? "#DFA258" : "white"}
-            width="100%"
-            _hover={{ color: "#DFA258" }}
-            _active={{ bg: "#367236" }}
-            position="relative"
-            pl="10"
-            mb={"3"}
-            onClick={() => navigate("/myorders")}
-            _before={{
-              content: '""',
-              position: "absolute",
-              height: isActive("/myorders") ? "50%" : "0",
-              width: "4px",
-              bg: "#DFA258",
-              left: "0",
-              borderRadius: "0 1.5px 1.5px 0",
-              transition: "height 0.3s ease-in-out",
-            }}
-          >
-            My Orders
-          </Button>
-          <Divider borderColor="whiteAlpha.900" />
-          <Button
-            leftIcon={<MdEdit size="24px" />}
-            fontSize="lg"
-            justifyContent="flex-start"
-            bg="#367236"
-            color={isActive("/editprofile") ? "#DFA258" : "white"}
-            width="100%"
-            _hover={{ color: "#DFA258" }}
-            _active={{ bg: "#367236" }}
-            position="relative"
-            pl="10"
-            mt={"3"}
-            onClick={() => navigate("/editprofile")}
-            _before={{
-              content: '""',
-              position: "absolute",
-              height: isActive("/editprofile") ? "50%" : "0",
-              width: "4px",
-              bg: "#DFA258",
-              left: "0",
-              borderRadius: "0 1.5px 1.5px 0",
-              transition: "height 0.3s ease-in-out",
-            }}
-          >
-            Edit Profile
-          </Button>
-        </VStack>
-        <Button
-          color={"white"}
-          bg={"#DFA258"}
-          mt={"16"}
-          _hover={{ bg: "yellow.700" }}
-          onClick={handleLogut}
-        >
-          <IoLogOutOutline /> Logout
-        </Button>
+       </VStack>
+        )}
       </Box>
     </HStack>
   );

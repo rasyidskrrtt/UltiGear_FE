@@ -68,28 +68,34 @@ const CrudProduct = () => {
 
   return (
     <Layout>
-      <HStack height="100vh" w="100vw" align="stretch">
+      <HStack height="100vh" w="100%" align="stretch" spacing={0}
+        wrap={{ base: "wrap", md: "nowrap" }}
+      >
         <SideBarAdmin />
 
         <Box
-          p={10}
-          h="100vh"
-          w="100vw"
-          alignContent="center"
-          overflowY="scroll"
+          p={{ base: "50px 30px", md: 10 }}
+          width="100%"
+          overflowY="auto"
+          overflowX="auto"
+          height={{ base: "calc(100vh - 80px)", md: "100vh" }}
         >
           <HStack
             justifyContent="space-between"
             mb={4}
             p={4}
-            px={10}
+            px={{ base: 6, md: 10 }}
             bg="#367236"
             borderRadius="md"
             boxShadow="sm"
+            wrap={{ base: "wrap", md: "nowrap" }}
+            position="sticky"
+            top="0"
+            zIndex="1" 
           >
             <Text
               color="white"
-              fontSize="4xl"
+              fontSize={{ base: "2xl", md: "4xl" }}
               fontWeight="sm"
               fontFamily="'Covered By Your Grace', cursive"
             >
@@ -98,7 +104,7 @@ const CrudProduct = () => {
             <Button
               color="white"
               bg="#DFA258"
-              w="10%"
+              w={{ base: "30%", md: "20%", lg: "10%"}}
               variant="unstyled"
               onClick={handleAddProduct}
             >
@@ -107,23 +113,31 @@ const CrudProduct = () => {
           </HStack>
 
           {/* Table Section */}
+          <Box
+            overflowX="auto" 
+            w="100%" 
+            h="100%"
+            overflowY="auto"
+            transform='scale(1)'
+            transformOrigin="top left"
+          >
           <Table
             variant="striped"
             colorScheme="black"
             borderRadius="md"
             boxShadow="sm"
           >
-            <Thead bg="teal.800">
-              <Tr>
-                <Th color="white">Name</Th>
-                <Th color="white">Category</Th>
-                <Th color="white">Description</Th>
-                <Th color="white">Image</Th>
-                <Th color="white">Price</Th>
-                <Th color="white">Size</Th>
-                <Th color="white">Color</Th>
-                <Th color="white">Stock</Th>
-                <Th color="white">Actions</Th>
+            <Thead bg="teal.800" position="sticky" top="0" zIndex="1">
+              <Tr position="sticky" top="0" zIndex="1">
+                <Th color="white" position="sticky" top="0" zIndex="1" >Name</Th>
+                <Th color="white" position="sticky" top="0" zIndex="1" >Category</Th>
+                <Th color="white" position="sticky" top="0" zIndex="1" >Description</Th>
+                <Th color="white" position="sticky" top="0" zIndex="1" >Image</Th>
+                <Th color="white" position="sticky" top="0" zIndex="1" >Price</Th>
+                <Th color="white" position="sticky" top="0" zIndex="1" >Size</Th>
+                <Th color="white" position="sticky" top="0" zIndex="1" >Color</Th>
+                <Th color="white" position="sticky" top="0" zIndex="1" >Stock</Th>
+                <Th color="white" textAlign="center" position="sticky" top="0" zIndex="1" >Actions</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -145,7 +159,7 @@ const CrudProduct = () => {
                   <Td>{product.size}</Td>
                   <Td>{product.color}</Td>
                   <Td>{product.stock}</Td>
-                  <Td>
+                  <Td textAlign="center">
                     <HStack spacing={2}>
                       <Button
                         bg="#367236"
@@ -173,6 +187,7 @@ const CrudProduct = () => {
               ))}
             </Tbody>
           </Table>
+          </Box>
         </Box>
       </HStack>
     </Layout>

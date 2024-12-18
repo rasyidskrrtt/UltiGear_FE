@@ -57,19 +57,19 @@ const AddProduct = () => {
 
   return (
     <Layout>
-      <HStack height="100vh" w="100vw" align="stretch">
+      <HStack height="100%" w="100%" align="stretch" spacing={0}>
         {/* Sidebar */}
         <Box>
           <SideBarAdmin />
         </Box>
         {/* Main Section */}
-        <Box p={5} px={20} h="100vh" w="100vw" bg="#F7F3F4" overflow="auto">
+        <Box p={{base:"30px 20px", md: "14px 20px"}} px={{base:4, md:16}} h="100vh" w="100vw" bg="#F7F3F4" overflow="auto">
           {/* Header Section */}
           <HStack
             justifyContent="space-between"
             mb={4}
             p={4}
-            px={10}
+            px={{base: 8, md: 10}}
             bg="#367236"
             borderRadius="md"
             boxShadow="sm"
@@ -97,13 +97,13 @@ const AddProduct = () => {
             spacing={4}
             align="stretch"
             bg="gray.200"
-            p={10}
+            p={{base:6, md:10}}
             borderRadius={10}
           >
             {/* Name Product */}
             <FormControl>
               <HStack>
-                <FormLabel w={48}>Name</FormLabel>
+                <FormLabel w={{base:32, md:48}}>Name</FormLabel>
                 <Input
                   onChange={(e) =>
                     setProduct({ ...product, name: e.target.value })
@@ -119,7 +119,7 @@ const AddProduct = () => {
             {/* Category */}
             <FormControl>
               <HStack>
-                <FormLabel w={48}>Category</FormLabel>
+                <FormLabel w={{base:32, md:48}}>Category</FormLabel>
                 <Input
                   onChange={(e) =>
                     setProduct({ ...product, category: e.target.value })
@@ -135,7 +135,7 @@ const AddProduct = () => {
             {/* Description Product */}
             <FormControl>
               <HStack>
-                <FormLabel w={48}>Description</FormLabel>
+                <FormLabel w={{base:32, md:48}}>Description</FormLabel>
                 <Textarea
                   onChange={(e) =>
                     setProduct({ ...product, description: e.target.value })
@@ -151,7 +151,7 @@ const AddProduct = () => {
             {/* Image Products */}
             <FormControl>
               <HStack>
-                <FormLabel w={48}>Image</FormLabel>
+                <FormLabel w={{base:32, md:48}}>Image</FormLabel>
                 <UploadImage onUpload={setImageUrl} />
               </HStack>
             </FormControl>
@@ -159,7 +159,7 @@ const AddProduct = () => {
             {/* Product Price */}
             <FormControl>
               <HStack>
-                <FormLabel w={48}>Price</FormLabel>
+                <FormLabel w={{base:32, md:48}}>Price</FormLabel>
                 <Input
                   type="number"
                   onChange={(e) =>
@@ -176,12 +176,12 @@ const AddProduct = () => {
             {/* Size */}
             <FormControl>
               <HStack>
-                <FormLabel w={40}>Size</FormLabel>
+                <FormLabel w={{base:24, md:40}}>Size</FormLabel>
                 <HStack spacing={4}>
                   {["S", "M", "L", "XL"].map((size) => (
                     <Button
                       key={size}
-                      size="sm"
+                      size= {{base: "xs", md:"sm"}}
                       variant="outline"
                       borderColor="black"
                       onClick={(e) => setProduct({ ...product, size })}
@@ -196,12 +196,12 @@ const AddProduct = () => {
             {/* Color */}
             <FormControl>
               <HStack>
-                <FormLabel w={40}>Color</FormLabel>
-                <HStack spacing={4}>
+                <FormLabel w={{base:24, md:40}}>Color</FormLabel>
+                <HStack spacing={{base: 2, md:4}}>
                   {["Red", "Green", "Yellow", "Blue"].map((color) => (
                     <Button
                       key={color}
-                      size="sm"
+                      size= {{base: "xs", md:"sm"}}
                       onClick={(e) => setProduct({ ...product, color })}
                       variant="outline"
                       colorScheme={color.toLowerCase()}
@@ -216,13 +216,14 @@ const AddProduct = () => {
             {/* Product Stock */}
             <FormControl>
               <HStack>
-                <FormLabel w={40}>Product Stock</FormLabel>
+                <FormLabel w={{base:24, md:40}}>Product Stock</FormLabel>
                 <HStack>
                   <Button
                     bg="#367236"
                     color="white"
                     variant="unstyled"
                     onClick={() => setStock(stock - 1)}
+                    size= {{base: "xs", md:"sm"}}
                   >
                     -
                   </Button>
@@ -234,6 +235,7 @@ const AddProduct = () => {
                       setStock(parseInt(valueString, 10))
                     }
                     min={0}
+                    size= {{base: "xs", md:"sm"}}
                   >
                     <NumberInputField />
                   </NumberInput>
@@ -242,6 +244,7 @@ const AddProduct = () => {
                     color="white"
                     variant="unstyled"
                     onClick={() => setStock(stock + 1)}
+                    size= {{base: "xs", md:"sm"}}
                   >
                     +
                   </Button>
@@ -253,7 +256,7 @@ const AddProduct = () => {
             <Button
               color="white"
               bg="#DFA258"
-              w="10%"
+              w={{base: "20%", md: "10%"}}
               variant="unstyled"
               onClick={handleSubmit}
               size="md"

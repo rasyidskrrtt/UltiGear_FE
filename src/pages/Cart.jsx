@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Layout from "./Layout";
-import { Button, HStack, Image, Text, VStack } from "@chakra-ui/react";
+import { Button, HStack, Image, Text, VStack, Divider } from "@chakra-ui/react";
 import SideBarSection from "../components/SideBarSection";
 import { useNavigate } from "react-router-dom";
 import { useHttp } from "../hooks/http";
@@ -78,25 +78,34 @@ const Cart = () => {
         {/* Main Section */}
         <VStack
           flex="1"
-          align="start"
-          padding="20px"
+          align={{ base: "center", md: "start" }}
+          padding={{ base: "5px", md: "20px" }}
           spacing={8}
           overflowY="auto"
-          height="100vh"
+          height={{ base: "calc(100vh - 80px)", md: "100vh" }} 
         >
           <Text
             fontSize="4xl"
             fontWeight="semibold"
             mb="-25px"
-            px={{ base: "30px", md: "70px" }}
+            mt={{ base: "30px", md: "0" }}
+            px={{ base: "30px", md: "35px", lg:"70px"}}
           >
             Cart
           </Text>
+          <Divider
+              borderColor="black.900"
+              mt={2}
+              mb={-4}
+              width="90%"
+              alignSelf="center"
+              display={{base: "flex", md: "none"}}
+            />
           <HStack
             spacing={4}
             align="stretch"
             w="full"
-            px={{ base: "10px", md: "50px" }}
+            px={{ base: "5px", md: "20px", lg: "50px" }}
             flexWrap="wrap"
             flexDirection={{ base: "column", md: "row" }}
           >
@@ -116,7 +125,7 @@ const Cart = () => {
                     bg="white"
                     boxShadow="md"
                     borderRadius="md"
-                    padding="20px"
+                    padding={{ base: "16px", md: "20px" }}
                     spacing={4}
                     align="center"
                     justify="space-between"
@@ -125,18 +134,18 @@ const Cart = () => {
                     <Image
                       src={cart.product_id.image_url}
                       alt={cart.product_id.name}
-                      boxSize="120px"
+                      boxSize={{ base: "80px", md: "100px", lg:"120px" }}
                       objectFit="cover"
                       borderRadius="md"
                     />
                     <VStack align="start" flex="1" spacing={1}>
-                      <Text fontWeight="bold">{cart.product_id.name}</Text>
+                      <Text fontSize={{ base: "md", md: "md" }} fontWeight="bold">{cart.product_id.name}</Text>
                       <Text fontSize="sm" color="gray.600">
                         {cart.product_id.size[0]}, {cart.product_id.color[0]}
                       </Text>
                       <HStack>
                         <Button
-                          size="sm"
+                          size={{ base: "xs", md: "sm" }}
                           fontWeight="bold"
                           bg="#367236"
                           color="white"
@@ -148,10 +157,11 @@ const Cart = () => {
                       </HStack>
                     </VStack>
                     <Text
+                      size={{ base: "xs", md: "sm" }}
                       fontWeight="bold"
                       color="#367236"
                       alignSelf="flex-end"
-                      px={6}
+                      px={2}
                       py={2}
                     >
                       Rp {cart.product_id.price.toLocaleString()}
