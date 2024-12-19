@@ -6,7 +6,7 @@ import Cart from "./pages/Cart";
 import MyOrders from "./pages/MyOrders";
 import EditProfile from "./pages/EditProfile";
 import Product from "./pages/Product";
-import PaymentSucces from "./pages/PaymentSucces";
+// import PaymentSucces from "./pages/PaymentSucces";
 // import PaymentMethod from "./pages/PaymentMethod";
 
 import Dashboard from "./pages/adminSection/Dashboard";
@@ -50,7 +50,7 @@ function App() {
             <Route path="/" element={<Login />} />
             <Route path="/login" element={<Login />} />
             <Route path="/regist" element={<Regist />} />
-            <Route path="/paymentsucces" element={<PaymentSucces />} />
+            {/* <Route path="/paymentsucces" element={<PaymentSucces />} /> */}
           </>
         )}
 
