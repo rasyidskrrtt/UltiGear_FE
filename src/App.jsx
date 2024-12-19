@@ -6,6 +6,7 @@ import Cart from "./pages/Cart";
 import MyOrders from "./pages/MyOrders";
 import EditProfile from "./pages/EditProfile";
 import Product from "./pages/Product";
+import PaymentSucces from "./pages/PaymentSucces";
 // import PaymentMethod from "./pages/PaymentMethod";
 
 import Dashboard from "./pages/adminSection/Dashboard";
@@ -29,7 +30,9 @@ function App() {
             <Route path="/myorders" element={<MyOrders />} />
             <Route path="/editprofile" element={<EditProfile />} />
             <Route path="/product/:productId" element={<Product />} />
+            <Route path="/paymentsucces" element={<PaymentSucces />} />
             {/* <Route path="/paymentmethod" element={<PaymentMethod />} /> */}
+
             {/* admin routers */}
             {user?.userRole === "ADMIN" && (
               <>
@@ -50,6 +53,7 @@ function App() {
             <Route path="/regist" element={<Regist />} />
           </>
         )}
+
         {/* Catch-all route for undefined paths */}
         <Route path="*" element={<NotFound />} />
       </Routes>
