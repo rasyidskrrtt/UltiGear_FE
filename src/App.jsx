@@ -30,7 +30,6 @@ function App() {
             <Route path="/myorders" element={<MyOrders />} />
             <Route path="/editprofile" element={<EditProfile />} />
             <Route path="/product/:productId" element={<Product />} />
-            <Route path="/paymentsucces" element={<PaymentSucces />} />
             {/* <Route path="/paymentmethod" element={<PaymentMethod />} /> */}
 
             {/* admin routers */}
@@ -51,6 +50,7 @@ function App() {
             <Route path="/" element={<Login />} />
             <Route path="/login" element={<Login />} />
             <Route path="/regist" element={<Regist />} />
+            <Route path="/paymentsucces" element={<PaymentSucces />} />
           </>
         )}
 
